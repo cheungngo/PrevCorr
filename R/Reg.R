@@ -96,7 +96,7 @@ log_reg_spss_kref = function(datay, datax, j, i, kref) {
 log_reg_spss_cont = function(datay, datax, j, i) {
   var = as.numeric(unlist(datax[,i]))
   dep = as.numeric(unlist(datay[,j]))
-  ind = which((var!=0) & !is.na(var))
+  ind = which((var!=0) | !is.na(var))
   var = var[ind]
   dep = dep[ind]
   coeff = matrix(ncol = 4)
@@ -123,7 +123,7 @@ log_reg_spss_cont_adj = function(datay, datax, j, i, adj) {
 
   var = as.numeric(unlist(datax[,i]))
   dep = as.numeric(unlist(datay[,j]))
-  ind = which((var!=0) & !is.na(var))
+  ind = which((var!=0) | !is.na(var))
   var = var[ind]
   dep = dep[ind]
   datax_n = datax[ind,]
@@ -143,8 +143,13 @@ log_reg_spss_cont_adj = function(datay, datax, j, i, adj) {
 }
 
 
-# Logistic regression (continuous)
-
+#' Logistic regression (continuous independent variable; including 0)
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second variable
+#' @param j : column number with respect to datay
+#' @param i : column number with respect to datax
+#' @return Normal output of regression
 log_reg_spss_cont0 = function(datay, datax, j, i) {
   var = as.numeric(unlist(datax[,i]))
   dep = as.numeric(unlist(datay[,j]))
@@ -161,6 +166,14 @@ log_reg_spss_cont0 = function(datay, datax, j, i) {
 }
 
 
+#' Logistic regression with adjustment (continuous independent variable; including 0)
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second variable
+#' @param j : column number with respect to datay
+#' @param i : column number with respect to datax
+#' @param adj : column number(s) in datax for adjustments
+#' @return Normal output of regression
 log_reg_spss_cont_adj0 = function(datay, datax, j, i, adj) {
 
   var_names = c(colnames(datax)[i], colnames(datax)[adj])
@@ -187,10 +200,15 @@ log_reg_spss_cont_adj0 = function(datay, datax, j, i, adj) {
 }
 
 
-### Logistic regressions with adjustments (method 1)
-
-# Function for logistic regressions with adjustments
-
+#' Logistic regression with adjustments (categorical independent variable; specific referencing category)
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second variable
+#' @param j : column number with respect to datay
+#' @param i : column number with respect to datax
+#' @param kref : specific referencing categories
+#' @param adj : column numbers for adjustments
+#' @return Odds ratio and CIs
 log_reg_spss_kref_adj = function(datay, datax, j, i, kref, adj) {
   var_names = c(colnames(datax)[i], colnames(datax)[adj])
 
@@ -228,31 +246,13 @@ log_reg_spss_kref_adj = function(datay, datax, j, i, kref, adj) {
 }
 
 
-log_reg_spss_cont_adj = function(datay, datax, j, i, adj) {
-
-  var_names = c(colnames(datax)[i], colnames(datax)[adj])
-
-  var = as.numeric(unlist(datax[,i]))
-  dep = as.numeric(unlist(datay[,j]))
-  ind = which((var!=0) | !is.na(var))
-  var = var[ind]
-  dep = dep[ind]
-  datax_n = datax[ind,]
-
-  coeff = matrix(ncol = 4)
-
-  f = as.formula(paste("dep",
-                       paste("datax_n$", var_names, sep = "", collapse = "+"),
-                       sep = "~"))
-
-  modglm = glm(f, family = "binomial")
-  coeff[1,] = summary(modglm)$coef[2,]
-  rownames(coeff) = colnames(datax)[i]
-  colnames(coeff) = c("Estimate", "SD", "z-value", "p-value")
-  coeff = round(coeff, digits = 3)
-  return(coeff)
-}
-
+#' linear regression
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second variable
+#' @param j : column number with respect to datay
+#' @param i : column number with respect to datax
+#' @return Normal output of a regression
 lin_reg = function (datay, datax, j, i) {
   var = as.numeric(unlist(datax[,i]))
   dep = as.numeric(unlist(datay[,j]))

@@ -1,5 +1,10 @@
-# Function to expand variables from a vector of characters
-
+#' Function to expand variables from a vector of characters
+#'
+#' @param masterdata : masterdata; not much use, just to know the number of subjects
+#' @param data : the dataframe containing the characters of variables
+#' @param index : the index column in "data"
+#' @param column : the column of characters in "data"
+#' @return A matrix with columns for different characters, and rows for different subjects, with values of 1 and 2
 expand_var = function(masterdata, data, index, column) {
   col = unlist(unique(data[,column]))
   index2 = unlist(data[,index])
@@ -23,8 +28,10 @@ expand_var = function(masterdata, data, index, column) {
 }
 
 
-# A function to create dummy variables
-
+#' A function to create dummy variables
+#'
+#' @param column : a column of vectors, e.g. with values 1:6
+#' @return a matrix with number of columns equals number of vectors
 create_dummy = function(column) {
   n = range(column)[2]
   len = dim(column)[1]
@@ -44,7 +51,11 @@ create_dummy = function(column) {
   return(data)
 }
 
-# To be used with create_dummy()
+#' To be used with create_dummy(); creating dummies for multiple variables
+#'
+#' @param masterdata : masterdata
+#' @param ind : index of columns in masterdata that we want to create dummy variables
+#' @return Matrix of a series of combination of dummy variables
 cbind_dummy = function(masterdata, ind) {
   ini = ind[1]
   initial = create_dummy(masterdata[,ini])
