@@ -1,5 +1,7 @@
-# function for calculating the CI
-
+#' Function calculating the confidence interval from the coefficient obtained by logistic regression
+#'
+#' @param m : model calculated by glm()
+#' return an array of odds ratio (LCI, OR, UCI)
 OR_CI = function(m) {
   ifelse(is.na(coef(m)[2]),
          return(c(NA,NA,NA)),
@@ -8,8 +10,13 @@ OR_CI = function(m) {
 }
 
 
-# function for logistic regression (categorical)
-
+#' Logistic regression (categorical independent variable; referenced to the category with most subjects)
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second variable
+#' @param j : column number with respect to datay
+#' @param i : column numbers with respect to datax
+#' @return Odds ratio and CIs
 log_reg_spss_max = function(datay, datax, j, i) {
   var = as.numeric(unlist(datax[,i]))
   dep = as.numeric(unlist(datay[,j]))
@@ -40,6 +47,14 @@ log_reg_spss_max = function(datay, datax, j, i) {
   return(coeff)
 }
 
+#' Logistic regression (categorical independent variable; specific referencing category)
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second variable
+#' @param j : column number with respect to datay
+#' @param i : column numbers with respect to datax
+#' @param kref : specific referencing categories
+#' @return Odds ratio and CIs
 log_reg_spss_kref = function(datay, datax, j, i, kref) {
   var = as.numeric(unlist(datax[,i]))
   dep = as.numeric(unlist(datay[,j]))
@@ -71,10 +86,13 @@ log_reg_spss_kref = function(datay, datax, j, i, kref) {
 }
 
 
-### Logistic regression for continuous variables
-
-# Logistic regression (continuous)
-
+#' Logistic regression (continuous independent variable)
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second variable
+#' @param j : column number with respect to datay
+#' @param i : column number with respect to datax
+#' @return Normal output of regression
 log_reg_spss_cont = function(datay, datax, j, i) {
   var = as.numeric(unlist(datax[,i]))
   dep = as.numeric(unlist(datay[,j]))
@@ -91,6 +109,14 @@ log_reg_spss_cont = function(datay, datax, j, i) {
 }
 
 
+#' Logistic regression with adjustment (continuous independent variable)
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second variable
+#' @param j : column number with respect to datay
+#' @param i : column number with respect to datax
+#' @param adj : column number(s) in datax for adjustments
+#' @return Normal output of regression
 log_reg_spss_cont_adj = function(datay, datax, j, i, adj) {
 
   var_names = c(colnames(datax)[i], colnames(datax)[adj])

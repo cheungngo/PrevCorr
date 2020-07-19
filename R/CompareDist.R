@@ -1,3 +1,10 @@
+#' Creating a table showing the distributions grouped by 2 variables
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second variable, e.g. sex
+#' @param y : column number with respect to datay
+#' @param x : column number with respect to datax
+#' @return A table grouped by the 2 variables with percentages
 tab_ngo = function(datay, datax, y, x) {
   ind = which(datax[,x]!=0)
   datax_n = datax[ind,]
@@ -15,6 +22,13 @@ tab_ngo = function(datay, datax, y, x) {
   return(tab_new)
 }
 
+#' Creating a series of tables showing the distributions
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second to nth variable
+#' @param y : column number with respect to datay
+#' @param x : column numbers with respect to datax
+#' @return A series of tables with percentages
 serial_tab = function(datay, datax, y, spec_x) {
   for (i in 1:length(spec_x)) {
     assign(paste("tab", colnames(datax)[spec_x[i]],sep = ""),
@@ -28,6 +42,13 @@ serial_tab = function(datay, datax, y, spec_x) {
   return(tab)
 }
 
+#' Simple table without percentage
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second variable, e.g. sex
+#' @param y : column number with respect to datay
+#' @param x : column number with respect to datax
+#' @return A table grouped by the 2 variables
 tab_norm = function(datay, datax, y, x) {
   ind = which(datax[,x]!=0)
   datax_n = datax[ind,]
@@ -40,6 +61,13 @@ tab_norm = function(datay, datax, y, x) {
   return(tab)
 }
 
+#' Serial fisher tests
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second to nth variables
+#' @param y : column number with respect to datay
+#' @param x : column numbers with respect to datax
+#' @return A matrix with all the resulted p-values
 serial_fisher = function(datay, datax, y, spec_x) {
   mat = matrix(nrow = length(spec_x))
   for (i in 1:length(spec_x)) {
@@ -54,7 +82,13 @@ serial_fisher = function(datay, datax, y, spec_x) {
   return(mat)
 }
 
-
+#' Serial chi-square tests
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second to nth variables
+#' @param y : column number with respect to datay
+#' @param x : column numbers with respect to datax
+#' @return A matrix with all the resulted p-values and X-squared statistics
 serial_chisq = function(datay, datax, y, spec_x) {
   mat = matrix(nrow = length(spec_x),
                ncol = 2)
@@ -74,6 +108,13 @@ serial_chisq = function(datay, datax, y, spec_x) {
   return(mat)
 }
 
+#' Creating a table showing the distributions grouped by 2 variables (Including zeroes in the second variable)
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second variable, e.g. sex
+#' @param y : column number with respect to datay
+#' @param x : column number with respect to datax
+#' @return A table grouped by the 2 variables with percentages
 tab_ngo_0 = function(datay, datax, y, x) {
   datax_n = datax
   datay_n = datay
@@ -90,6 +131,13 @@ tab_ngo_0 = function(datay, datax, y, x) {
   return(tab_new)
 }
 
+#' Simple table without percentage (Including zeroes in the second variable)
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second variable, e.g. sex
+#' @param y : column number with respect to datay
+#' @param x : column number with respect to datax
+#' @return A table grouped by the 2 variables
 tab_norm_0 = function(datay, datax, y, x) {
   datax_n = datax
   datay_n = datay
@@ -101,6 +149,13 @@ tab_norm_0 = function(datay, datax, y, x) {
   return(tab)
 }
 
+#' Creating a series of tables showing the distributions (Including zeroes in the second variable)
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second to nth variable
+#' @param y : column number with respect to datay
+#' @param x : column numbers with respect to datax
+#' @return A series of tables with percentages
 serial_tab_0 = function(datay, datax, y, spec_x) {
   for (i in 1:length(spec_x)) {
     assign(paste("tab", colnames(datax)[spec_x[i]],sep = ""),
@@ -114,6 +169,13 @@ serial_tab_0 = function(datay, datax, y, spec_x) {
   return(tab)
 }
 
+#' Serial chi-square tests (Including zeroes in the second variable)
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second to nth variables
+#' @param y : column number with respect to datay
+#' @param x : column numbers with respect to datax
+#' @return A matrix with all the resulted p-values
 serial_chisq_0 = function(datay, datax, y, spec_x) {
   mat = matrix(nrow = length(spec_x))
   for (i in 1:length(spec_x)) {
@@ -128,6 +190,13 @@ serial_chisq_0 = function(datay, datax, y, spec_x) {
   return(mat)
 }
 
+#' Simple t test
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second variable
+#' @param y : column number with respect to datay
+#' @param x : column numbers with respect to datax
+#' @return A matrix with the rounded t-test results
 t_test_ngo = function (datay, datax, y, x) {
   ind = which(datay[,y] == 0)
   mat = matrix(nrow = 1,
@@ -150,6 +219,13 @@ t_test_ngo = function (datay, datax, y, x) {
   return(mat)
 }
 
+#' Serial t tests
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second to nth variables
+#' @param y : column number with respect to datay
+#' @param x : column numbers with respect to datax
+#' @return A matrix with all the rounded t-test results
 serial_t = function(datay, datax, y, spec_x) {
   mat = matrix(nrow = length(spec_x),
                ncol = 8)
@@ -162,6 +238,15 @@ serial_t = function(datay, datax, y, spec_x) {
   return(mat)
 }
 
+#' Simple t test by statistics
+#'
+#' @param n1 : number of subjects in group 1
+#' @param m1 : mean of group 1
+#' @param sd1 : sd of group 1
+#' @param n2 : number of subjects in group 2
+#' @param m2 : mean of group 2
+#' @param sd2 : sd of group 2
+#' @return results of t test
 t.test02 <- function(n1, m1, sd1, n2, m2, sd2) {
   se <- sqrt((sd1^2/n1) + (sd2^2/n2))
   df <- ((sd1^2/n1 + sd2^2/n2)^2) / ((sd1^2/n1)^2/(n1-1) + (sd2^2/n2)^2/(n2-1))
@@ -170,3 +255,4 @@ t.test02 <- function(n1, m1, sd1, n2, m2, sd2) {
   names(dat) = c("mean_difference", "SE", "t", "p-value")
   return(dat)
 }
+
