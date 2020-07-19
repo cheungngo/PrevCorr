@@ -1,0 +1,5 @@
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) :
+  namespace 'fs' 1.2.7 is being loaded, but >= 1.3.0 is required
+ERROR: lazy loading failed for package 'usethis'
+
+install.packages(c("fs", "usethis"), type = "source")
