@@ -1,3 +1,11 @@
+#' Merging the results (of logistic regression)
+#'
+#' @param masterdata : masterdata
+#' @param path : file path
+#' @param number : file chapter number
+#' @param key : identifier (e.g. ISSM / PEDT)
+#' @param ind : desired variables for merging
+#' @return Merged results
 merge_coef = function(masterdata, path, number, key, ind) {
   ini = ind[1]
   initial = as.data.frame(read_csv(paste(path, sprintf("%02d", number), key, colnames(masterdata)[ini], ".csv", sep = "")))
@@ -17,6 +25,10 @@ merge_coef = function(masterdata, path, number, key, ind) {
 }
 
 
+#' Beautifying results (OR)
+#'
+#' @param data : results of logistic regression (in the form of OR and CI)
+#' @return Beautified results
 beautify_cate = function (data) {
   data[,1:3] = apply(data[,1:3], 2, function(i) {
     round(i, digits = 1)
@@ -32,6 +44,10 @@ beautify_cate = function (data) {
 }
 
 
+#' Beautifying results of logistic regression (with normal regression output)
+#'
+#' @param cont : results of logistic regression with normal regression output
+#' @return beautified results
 cont_beau = function(cont) {
   OR = apply(cont, 1, function (i) {
     exp(i[1] + qnorm(c(0.025,0.5,0.975)) * i[2])

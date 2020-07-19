@@ -1,5 +1,7 @@
-# Function to calculate the multiplier for equivalent dosage (ref = fluoxetine)
-
+#' Function to calculate the multiplier for equivalent dosage (ref = fluoxetine)
+#'
+#' @param x : indicating the type of antidepressants; 1: fluoxetine; 2: Sertraline; 3: Paroxetine; 4: Lexapro; 5: Cipram; 6: Fluvoxamine
+#' @return A dosage multiplier
 drug2mult = function (x) {
   if (x == 1) {
     mult = 1
@@ -25,6 +27,10 @@ drug2mult = function (x) {
 }
 
 
+#' Classifying antidepressants into different drug classes
+#'
+#' @param x : drug name; case sensitive
+#' @return Drug class
 drug_class = function(x) {
   if (x == "Agomelatine") {
     return("MTASA")
