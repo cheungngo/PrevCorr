@@ -1,0 +1,243 @@
+---
+title: "Introducing the PrevCorr package"
+author: "cheungngo"
+date: "26 February 2021"
+output: html_document
+---
+
+##### This package is developed to allow high-throughput statistical calculation for prevalence-correlate studies.  Many useful functions were included, and users can produce hundreds clumpsy confusion tables at a time, do hundreds of multivariate logistic regressions at a time, or hundreds of tests for multicollinearity at a time, etc.  With the use of this package, the time for statistical analysis would be much much reduced, and the results would be readily reproducible and repeatable.
+
+
+### Preparing the environment
+
+```{r, eval=FALSE}
+### Installing the package
+
+install.packages("devtools") # devtools required to install packages from github
+library(devtools)
+
+devtools::install_github("cheungngo/PrevCorr") # installing the "PrevCorr" package
+```
+
+```{r, message=FALSE}
+### Loading the library
+
+library(PrevCorr)
+```
+
+
+### Format of dataframe required
+
+```{r, message=FALSE}
+### Loading the data
+# Data not included in the package
+
+# separate files for dependent and independent variables
+library(readr)
+dependent_var <- read_csv("~/dependent_var.csv")
+masterdata_A <- read_csv("~/masterdata_A.csv")
+masterdata_B <- read_csv("~/masterdata_B.csv")
+```
+
+```{r}
+### Format of the dataframe for dependent variables
+
+# Need to follow the rules to let the functions work
+# each row for one subject
+# for binary outcome, 0 for no; 1 for yes (i.e. 0 for no condition, 1 for condition present)
+# functions written in this package are mostly for binary outcome, please contact author for other possible variations
+
+dependent_var[1:10,c(1, 14)] # a portion of dataframe
+```
+
+```{r}
+### Format of the dataframe for independent variables
+
+# Need to follow the rules to let the functions work
+# each row for one subject
+
+# for categorical variables (i.e. education, welfare, marital, etc), just use numbers to represent each category; if binary => 1 and 2
+# for continuous variables (i.e. age, sex_no_per_mo, sex_partner_no, etc), can simply input the numbers
+# inputing "0" represents no entry, but it might be regarded as an extra category for categorical variables; for continuous variables, we have functions to include or exclude those "0"s as sometimes "0" means zero but not no entry
+
+masterdata_A[1:10,c(14, 16:17, 13, 18:19)] # a portion of dataframe
+```
+
+
+### Useful functions from this package
+
+```{r, eval=FALSE}
+### You can view the documentation of all functions in the package using the following codes
+
+help(package = "PrevCorr")
+```
+
+```{r}
+### Getting the column number
+
+# First you need to get the column numbers for your concerned variables
+# you can simply visualize using names(#concerned dataframe)
+
+names(dependent_var) # this serves an example
+```
+
+```{r}
+### Serial Shapiro-Wilk test
+
+# Shapiro-Wilk test is performed to see if the variables were normally distributed, thus to guide subsequent tests (i.e. t-test or Wilcoxon)
+
+ind = c(13, 55:57, 19, 18, 97, 98) # these numbers represents the column number of the concerned variable in the dataframe
+
+serial_shapiro(masterdata_A, ind) # this gives all the results for the concerned variables; note that "masterdata_A" is the dataframe concerned
+# serial_shapiro(data, cols)
+# data : the dataframe concerned
+# cols : the columns of the variable in the dataframe concerned
+
+```
+
+```{r}
+### Frequency of occurence for multiple variables
+
+# This is to calculate the frequency of occurences of many categorical variables at a time
+
+indb = c(3:5,2) # these numbers represents the column number of the concerned variable in the dataframe; of course there could be more
+
+serial_foo(masterdata_B, indb)
+# serial_foo(data, cols)
+# data : the dataframe concerned
+# cols : the columns of the variable in the dataframe concerned
+```
+
+```{r}
+### Median and IQR
+
+# This is to calculate the median and IQR for continuous variables (that were not of normal distributions)
+
+ind = c(13, 55:57, 19, 18, 97, 98) # these numbers represents the column number of the concerned variable in the dataframe
+
+serial_miqr(masterdata_A, ind)
+# serial_miqr(data, cols)
+# data : the dataframe concerned
+# cols : the columns of the variable in the dataframe concerned
+```
+
+```{r}
+### A series of confusion tables
+
+# This is to produce the confusion tables for categorical variables
+
+ind = c(14:17) # these numbers represents the column number of the concerned variable in the dataframe
+
+serial_tab(dependent_var, # the dataframe for dependent variables
+           masterdata_A, # the dataframe for independent variables
+           1, # 1 being the column number of the dependent variable concerned
+           ind)
+```
+
+```{r}
+### A series of fisher exact tests
+
+# Many fisher exact tests at a time
+
+ind = c(14:17) # these numbers represents the column number of the concerned variable in the dataframe
+
+serial_fisher(dependent_var, # the dataframe for dependent variables
+              masterdata_A, # the dataframe for independent variables
+              1, # 1 being the column number of the dependent variable concerned
+              ind)
+
+### Note that we also have functions for chi-square tests! Similar way of use
+### serial_chisq()
+```
+
+```{r}
+### Serial MWW (wilcoxon) tests
+
+# Many wilcoxon tests at a time
+
+ind = c(13, 55:57, 19, 18, 97, 98) # these numbers represents the column number of the concerned variable in the dataframe
+
+serial_wilcox(dependent_var, # the dataframe for dependent variables
+              masterdata_A, # the dataframe for independent variables
+              1, # 1 being the column number of the dependent variable concerned
+              ind)
+
+### Explaining the output table
+# column 1: dependent var
+# column 2: independent var
+# column 3: wilcoxon stat
+# column 4: p-value
+# column 5 and 6: median and iqr for the respective group (grouped by dependent var = 0 and 1)
+
+### Note that for variables with normal distribution we can use serial_t() in the same package
+```
+
+```{r}
+### Serial logistic regressions (with adjustments) for categorical variables at a time
+
+adj = c(13, 42:46, 53, 61) # these numbers represents the column numbers of the concerned variable for adjustment in the dataframe; these would be repeated for each analysis for the concerned variables
+ind = c(14, 16:17) # these numbers represents the column numbers of the concerned variable for analysis in the dataframe
+
+serial_logregka(dependent_var, # the dataframe for dependent variables
+                masterdata_A, # the dataframe for independent variables
+                1, # 1 being the column number of the dependent variable concerned
+                ind, 
+                1, # The category for reference
+                adj)
+
+# another example with a different category for reference
+serial_logregka(dependent_var, 
+                masterdata_A, 
+                1, 
+                15, # different variable
+                2, # different category for reference
+                adj)
+
+### Explaining the output table
+# column 1: variable name
+# column 2: Odds ratio and CI
+# column 3: p-value
+
+### Note that there are functions for logistic regressions with continuous variables as well, e.g.:
+# serial_logregkacont(); which excludes "0" values from analysis
+# serial_logregkacont0(); which includes "0" values from analysis 
+```
+
+```{r, warning=FALSE}
+### VIFs for a series of multivariate logistic regressions (categorical variables)
+
+adj = c(13, 42:46, 53, 61) # these numbers represents the column numbers of the concerned variable for adjustment in the dataframe; these would be repeated for each analysis for the concerned variables
+ind = c(23:24, 47:49, 62:63) # these numbers represents the column numbers of the concerned variable for analysis in the dataframe
+
+serial_vif(dependent_var, # the dataframe for dependent variables
+           masterdata_A, # the dataframe for independent variables
+           1, # 1 being the column number of the dependent variable concerned
+           ind, 
+           1, # The category for reference
+           adj)
+
+### Note that there are functions for VIFs for logistic regressions with continuous variables as well, e.g.:
+# serial_vif_cont(); which excludes "0" values from analysis
+# serial_vif_cont_0(); which includes "0" values from analysis
+```
+
+
+### Output of results
+
+```{r, warning=FALSE}
+### The output of results is simple
+### For each analysis, pass the calculation to an object, i.e.
+
+result = serial_logregka(dependent_var, masterdata_A, 1, ind, 1, adj)
+
+### And then export the object with the following code:
+
+write.csv(result, # the concerned object
+          "~/testingresults.csv", # output filename
+          row.names = T)
+
+### the output file could be read by excel, and should be readily presentable as the final table in the dissertation with some standard formatting
+```
+
+
+##### The above demonstration does not include all the functions in the package.  Other interesting functions include those for classifying anti-depressants into respective classes, calculating equivalent SSRI dosage, data wrangling, and functions to facilitate step-wise multivariate regressions.  Please contact author for further queries.
