@@ -47,6 +47,8 @@ log_reg_spss_max = function(datay, datax, j, i) {
   return(coeff)
 }
 
+
+
 #' Logistic regression (categorical independent variable; specific referencing category)
 #'
 #' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
@@ -142,6 +144,27 @@ log_reg_spss_cont_adj = function(datay, datax, j, i, adj) {
   return(coeff)
 }
 
+#' A series of logistic regression with adjustment (continuous independent variable)
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second variable
+#' @param j : column number with respect to datay
+#' @param i : column numbers with respect to datax
+#' @param adj : column number(s) in datax for adjustments
+#' @return A beautified output for the series of regressions
+serial_logregkacont = function (datay, datax, j, i, adj) {
+  for (x in i) {
+    assign(paste("mod", colnames(datax)[x],sep = ""),
+           log_reg_spss_cont_adj(datay, datax, j, x, adj))
+  }
+  tab = eval(parse(text = paste("mod", colnames(datax)[i[1]],sep = "")))
+  for (x in i[-1]) {
+    tab2 = eval(parse(text = paste("mod", colnames(datax)[x],sep = "")))
+    tab = rbind(tab, tab2)
+  }
+  return(cont_beau(tab))
+}
+
 
 #' Logistic regression (continuous independent variable; including 0)
 #'
@@ -200,6 +223,28 @@ log_reg_spss_cont_adj0 = function(datay, datax, j, i, adj) {
 }
 
 
+#' A series of logistic regression with adjustment (continuous independent variable; including 0)
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second variable
+#' @param j : column number with respect to datay
+#' @param i : column numbers with respect to datax
+#' @param adj : column number(s) in datax for adjustments
+#' @return A beautified output for the series of regressions
+serial_logregkacont0 = function (datay, datax, j, i, adj) {
+  for (x in i) {
+    assign(paste("mod", colnames(datax)[x],sep = ""),
+           log_reg_spss_cont_adj0(datay, datax, j, x, adj))
+  }
+  tab = eval(parse(text = paste("mod", colnames(datax)[i[1]],sep = "")))
+  for (x in i[-1]) {
+    tab2 = eval(parse(text = paste("mod", colnames(datax)[x],sep = "")))
+    tab = rbind(tab, tab2)
+  }
+  return(cont_beau(tab))
+}
+
+
 #' Logistic regression with adjustments (categorical independent variable; specific referencing category)
 #'
 #' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
@@ -239,10 +284,32 @@ log_reg_spss_kref_adj = function(datay, datax, j, i, kref, adj) {
            coeff[count,4] <- as.numeric(unlist(summary(modglm)$coefficients[2,4])))
     count = count + 1
   }
-  rownames(coeff) = c(ref, level)
+  rownames(coeff) = paste(var_names[1], c(ref, level), sep = "_")
   colnames(coeff) = c("LCI", "OR", "UCI", "p-value")
   coeff = round(coeff, digits = 3)
   return(coeff)
+}
+
+#' A Series of logistic regression with adjustments (categorical independent variable; specific referencing category)
+#'
+#' @param datay : dataframe that contains the first variable, e.g. disease diagnosis status
+#' @param datax : dataframe that contains the second variable
+#' @param j : column number with respect to datay
+#' @param i : column numbers with respect to datax
+#' @param kref : specific referencing categories
+#' @param adj : column numbers for adjustments
+#' @return A beautified output for the series of regressions
+serial_logregka = function (datay, datax, j, i, kref, adj) {
+  for (x in i) {
+    assign(paste("mod", colnames(datax)[x],sep = ""),
+           log_reg_spss_kref_adj(datay, datax, j, x, kref, adj))
+  }
+  tab = eval(parse(text = paste("mod", colnames(datax)[i[1]],sep = "")))
+  for (x in i[-1]) {
+    tab2 = eval(parse(text = paste("mod", colnames(datax)[x],sep = "")))
+    tab = rbind(tab, tab2)
+  }
+  return(beautify_cate(tab))
 }
 
 

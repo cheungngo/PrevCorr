@@ -1,7 +1,7 @@
 Package: PrevCorr
 Type: Package
 Title: Statistical methods for prevalence and correlate studies
-Version: 0.1.0
+Version: 0.1.2
 Authors@R: person("Cheung","Ngo",email="cheungngo@gmail.com",role=c("aut","cre"))
 Description: Statistical methods for prevalence and correlate studies
 License: MIT
